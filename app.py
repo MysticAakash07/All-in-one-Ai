@@ -16,7 +16,7 @@ menu = ["Calorie Calculator", "Speech to Text", "Text to Speech", "Image to Text
 choice = st.sidebar.radio("Select a task", menu)
 
 def calorie_calculator():
-    st.header("Calories Advisor APP")
+    st.header("Calories Calculator")
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
@@ -111,7 +111,18 @@ def chat_bot():
         st.write(response)
 
 def content_summarizer():
-     
+    st.header("Content Summarizer")
+    user_query = st.text_input("Enter the Content")
+    submit = st.button("Summarize")
+
+    input_prompt = f"""
+    You are a brilliant Content Summarizer. Can you summarize this : {user_query}
+    """
+
+    if submit and user_query:
+        response = get_gemini_response_for_text(input_prompt)
+        st.header("Summary")
+        st.write(response) 
 
 # Render the selected task
 if choice == "Calorie Calculator":
@@ -124,5 +135,5 @@ elif choice == "Image to Text":
     image_to_text()
 elif choice == "Chat Bot":
     chat_bot()
-elif choice == "Content Summarizer"
+elif choice == "Content Summarizer":
     content_summarizer()
