@@ -9,9 +9,9 @@ from PIL import Image
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Define the layout
-st.set_page_config(page_title="Multi-Task Application")
+st.set_page_config(page_title="All in One Ai Assistant")
 
-# Create horizontal menu using sidebar
+# Create menu using sidebar
 menu = ["Calorie Calculator", "Speech to Text", "Text to Speech", "Image to Text", "Chat Bot"]
 choice = st.sidebar.radio("Select a task", menu)
 
@@ -22,7 +22,7 @@ def calorie_calculator():
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image.", use_column_width=True)
 
-    submit = st.button("Tell me about the calories")
+    submit = st.button("Calculate calories")
 
     input_prompt = """
     You are an expert nutritionist. See the food items from the image 
@@ -41,7 +41,7 @@ def calorie_calculator():
 
     if submit:
         image_data = input_image_setup(uploaded_file)
-        response = get_gemini_response(input_prompt, image_data)
+        response = get_gemini_response_for_image(input_prompt, image_data)
         st.header("The Response is")
         st.write(response)
 
@@ -58,7 +58,7 @@ def input_image_setup(uploaded_file):
     else:
         raise FileNotFoundError("No file uploaded")
 
-def get_gemini_response(input_prompt, image):
+def get_gemini_response_for_image(input_prompt, image):
     model = genai.GenerativeModel('gemini-pro-vision')
     response = model.generate_content([input_prompt, image[0]])
     return response.text
@@ -74,7 +74,23 @@ def text_to_speech():
 
 def image_to_text():
     st.header("Image to Text Converter")
-    # Implement your Image to Text logic here
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Uploaded Image.", use_column_width=True)
+
+    submit = st.button("Extract Text from Image")
+
+    input_prompt = """
+    You are an expert in image processing. Extract the text content from the image.
+    If there is no text, say "Sorry, no text found in the image." 
+    """
+
+    if submit:
+        image_data = input_image_setup(uploaded_file)
+        response = get_gemini_response_for_image(input_prompt, image_data)
+        st.header("Extracted Text")
+        st.write(response)
 
 def chat_bot():
     st.header("Chat Bot")
