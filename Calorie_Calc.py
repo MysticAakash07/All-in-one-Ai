@@ -58,6 +58,7 @@ You are an expert in nutritionist where you need to see the food items from the 
         the percentage split of the ratio of carbohydrates, fats, fiber, sugar, and
         other things required in our diet
 
+        If there is No food item say "Sorry no Food item present" 
 
 """
 
