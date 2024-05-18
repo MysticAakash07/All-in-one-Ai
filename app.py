@@ -63,7 +63,11 @@ def get_gemini_response_for_image(input_prompt, image):
     response = model.generate_content([input_prompt, image[0]])
     return response.text
 
-# Placeholder functions for other tasks
+def get_gemini_response_for_text(input_prompt):
+    model = genai.GenerativeModel('models/gemini-pro')
+    response = model.generate_content([input_prompt])
+    return response.text
+
 def speech_to_text():
     st.header("Speech to Text Converter")
     # Implement your Speech to Text logic here
@@ -94,7 +98,18 @@ def image_to_text():
 
 def chat_bot():
     st.header("Chat Bot")
-    # Implement your Chat Bot logic here
+    user_query = st.text_input("Ask me anything:")
+    submit = st.button("Ask")
+
+    input_prompt = f"""
+    You are a brilliant chatbot. Can you answer this question: {user_query}
+    """
+
+    if submit and user_query:
+        response = get_gemini_response_for_text(input_prompt)
+        st.header("Response")
+        st.write(response)
+    
 
 # Render the selected task
 if choice == "Calorie Calculator":
