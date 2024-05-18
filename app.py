@@ -12,7 +12,7 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 st.set_page_config(page_title="All in One Ai Assistant")
 
 # Create menu using sidebar
-menu = ["Calorie Calculator", "Speech to Text", "Text to Speech", "Image to Text", "Chat Bot"]
+menu = ["Calorie Calculator", "Speech to Text", "Text to Speech", "Image to Text", "Chat Bot", "Content Summarizer"]
 choice = st.sidebar.radio("Select a task", menu)
 
 def calorie_calculator():
@@ -109,7 +109,9 @@ def chat_bot():
         response = get_gemini_response_for_text(input_prompt)
         st.header("Response")
         st.write(response)
-    
+
+def content_summarizer():
+     
 
 # Render the selected task
 if choice == "Calorie Calculator":
@@ -122,3 +124,5 @@ elif choice == "Image to Text":
     image_to_text()
 elif choice == "Chat Bot":
     chat_bot()
+elif choice == "Content Summarizer"
+    content_summarizer()
