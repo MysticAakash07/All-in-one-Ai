@@ -4,6 +4,10 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from PIL import Image
+import speech_recognition as sr
+import keyboard
+from gtts import gTTS
+import tempfile
 
 # Configuration for Google Gemini API
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -70,11 +74,34 @@ def get_gemini_response_for_text(input_prompt):
 
 def speech_to_text():
     st.header("Speech to Text Converter")
-    # Implement your Speech to Text logic here
+    recognizer = sr.Recognizer()
+
+    def listen_for_command():
+        with sr.Microphone() as source:
+            st.write("Listening...")
+            audio = recognizer.listen(source)
+
+        try:
+            command = recognizer.recognize_google(audio)
+            st.write(f"Command: {command}")
+        except sr.UnknownValueError:
+            st.write("Sorry, I did not understand that.")
+        except sr.RequestError:
+            st.write("Could not request results; check your network connection.")
+
+    if st.button("Start Listening"):
+        listen_for_command()
 
 def text_to_speech():
     st.header("Text to Speech Converter")
-    # Implement your Text to Speech logic here
+    user_text = st.text_input("Enter text to convert to speech:")
+    submit = st.button("Convert")
+
+    if submit and user_text:
+        tts = gTTS(text=user_text ,lang='en',tld ='co.in' )
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            tts.save(tmp.name)
+            st.audio(tmp.name, format='audio/mp3')
 
 def image_to_text():
     st.header("Image to Text Converter")
