@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from PIL import Image
 import speech_recognition as sr
-import keyboard
-from gtts import gTTS
+import pyttsx3
 import tempfile
 
 # Configuration for Google Gemini API
@@ -77,18 +76,20 @@ def speech_to_text():
     recognizer = sr.Recognizer()
 
     def listen_for_command():
-        with sr.Microphone() as source:
-            st.write("Listening...")
-            audio = recognizer.listen(source)
-
         try:
-            command = recognizer.recognize_google(audio)
-            st.write(f"Command: {command}")
-        except sr.UnknownValueError:
-            st.write("Sorry, I did not understand that.")
-        except sr.RequestError:
-            st.write("Could not request results; check your network connection.")
+            with sr.Microphone() as source:
+                st.write("Listening...")
+                audio = recognizer.listen(source)
 
+            try:
+                command = recognizer.recognize_google(audio)
+                st.write(f"Command: {command}")
+            except sr.UnknownValueError:
+                st.write("Sorry, I did not understand that.")
+            except sr.RequestError:
+                st.write("Could not request results; check your network connection.")
+        except OSError:
+            st.write("No default input device avaliable. Please ensure a microphone is connected.")
     if st.button("Start Listening"):
         listen_for_command()
 
@@ -98,10 +99,18 @@ def text_to_speech():
     submit = st.button("Convert")
 
     if submit and user_text:
-        tts = gTTS(text=user_text ,lang='en',tld ='co.in' )
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            tts.save(tmp.name)
-            st.audio(tmp.name, format='audio/mp3')
+        # Initialize pyttsx3 engine
+        engine = pyttsx3.init()
+
+        # Save the speech to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
+            tmp_path = tmp_file.name
+
+        engine.save_to_file(user_text, tmp_path)
+        engine.runAndWait()
+
+        # Play the audio file in Streamlit
+        st.audio(tmp_path)
 
 def image_to_text():
     st.header("Image to Text Converter")
